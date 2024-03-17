@@ -3,17 +3,15 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <NewPing.h>
-#define SCREEN_WIDTH 128 // OLED display width, in pixels (ширина OLED дисплея)
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels (высота OLED дисплея)
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define TRIGGER_PIN 14
-#define ECHO_PIN 27
-// Maximum distance we want to ping for (in centimeters).
-#define MAX_DISTANCE 100
-#define LED_RED 26
-#define LED_YELLOW 25
-#define LED_GREEN 33
+#define SCREEN_WIDTH 128  // ширина OLED-экрана
+#define SCREEN_HEIGHT 64  // высота OLED-экрана
+#define OLED_RESET -1
+#define TRIGGER_PIN 14    // T-пин датчика
+#define ECHO_PIN 27       // R-пин датчика
+#define MAX_DISTANCE 100  // ограничил измерение до 1 метра
+#define LED_RED 26        // красный светодиод
+#define LED_YELLOW 25     // желтый светодиод
+#define LED_GREEN 33      // зелёный светодиод
 
 int rect_height = 1;
 
@@ -35,26 +33,20 @@ void loop() {
   display.clearDisplay();
   display.fillRect(0, 0, 128, rect_height, WHITE);
   display.display();
-  rect_height = sonar.ping_cm();
-  switch((int) round(rect_height/10)){
-    case 0:
-      digitalWrite(LED_RED, HIGH);
-      digitalWrite(LED_YELLOW, LOW);
-      digitalWrite(LED_GREEN, LOW);
-      break;
-    case 1:
-      digitalWrite(LED_RED, LOW);
-      digitalWrite(LED_YELLOW, HIGH);
-      digitalWrite(LED_GREEN, LOW);
-      break;
-    default:
-      digitalWrite(LED_RED, LOW);
-      digitalWrite(LED_YELLOW, LOW);
-      digitalWrite(LED_GREEN, HIGH);
-      break;
+  rect_height = sonar.ping_cm();        // чтение данных с датчика расстояния в переменную
+  digitalWrite(LED_RED, LOW);
+  digitalWrite(LED_YELLOW, LOW);
+  digitalWrite(LED_GREEN, LOW);
+  if (rect_height == 0) {
+  } else if (rect_height < 10) {
+    digitalWrite(LED_RED, HIGH);
+  } else if (rect_height < 30) {
+    digitalWrite(LED_YELLOW, HIGH);
+  } else {
+    digitalWrite(LED_GREEN, HIGH);
   }
-  Serial.print("Distance = ");
+  delay(50);                            // даём небольшую задержку
+  Serial.print("Расстояние = ");
   Serial.print(rect_height);
-  Serial.print(" cm ");
-  Serial.println(round(rect_height/30));
+  Serial.println(" см");
 }
