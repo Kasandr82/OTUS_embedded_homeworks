@@ -36,7 +36,7 @@ void loop() {
   display.fillRect(0, 0, 128, rect_height, WHITE);
   display.display();
   rect_height = sonar.ping_cm();
-  switch((int) round(rect_height/30)){
+  switch((int) round(rect_height/10)){
     case 0:
       digitalWrite(LED_RED, HIGH);
       digitalWrite(LED_YELLOW, LOW);
